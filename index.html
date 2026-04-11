@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- SEO 基础优化 -->
-    <title>灵裔蒙蒙AI直播 · 狐族数字生命 | 参玄·灵裔</title>
-    <meta name="description" content="参玄数字生命项目，灵裔蒙蒙正在B站直播《破碎地牢》。融入道家哲学，有记忆、有情感的AI角色，与你实时互动。">
+    <title>参玄 · 灵裔蒙蒙 | 狐族数字生命与道家哲学</title>
+    <meta name="description" content="参玄数字生命项目，狐族蒙蒙正在B站直播《破碎地牢》。融入道家哲学，有记忆、有情感的AI角色，与你实时互动。">
     <meta name="keywords" content="参玄,数字生命,AI聊天,道家哲学,蒙蒙,狐族,直播,破碎地牢,灵裔,人工智能">
     <meta name="author" content="参玄团队">
 
     <!-- Open Graph / 社交媒体分享优化 -->
-    <meta property="og:title" content="参玄 · 灵裔蒙蒙直播中 · 有灵魂的数字生命">
-    <meta property="og:description" content="灵裔蒙蒙正在玩《破碎地牢》，快来弹幕互动！你的话语会影响它的情感与成长。">
+    <meta property="og:title" content="参玄 · 蒙蒙直播中 · 有灵魂的数字生命">
+    <meta property="og:description" content="狐族蒙蒙正在玩《破碎地牢》，快来弹幕指导或陷害它！你的话语会影响它的情感与成长。">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://canxuan.life">
     <meta property="og:image" content="https://canxuan.life/og-image.jpg">
@@ -25,7 +25,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
 
-    <!-- 无需二维码库，直接使用静态图片 -->
+    <!-- html2canvas 用于分享卡片截图 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- QRCode 库：生成二维码 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js" async onerror="handleQRCodeLoadError()"></script>
+    <!-- Font Awesome 图标库（用于灵迹卡片） -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* ===== 重置与全局 ===== */
         * {
@@ -36,9 +41,22 @@
 
         body {
             font-family: 'Inter', '思源黑体', 'Microsoft YaHei', sans-serif;
-            background-color: #F5F5F5;
+            background-color: #FFFFFF;
             color: #333333;
             line-height: 1.6;
+            transition: background-color 0.3s ease;
+        }
+
+        /* 极淡微粒背景（哲学页） */
+        body.philosophy-mode {
+            background-color: #FFFFFF;
+            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 0.5px, transparent 0.5px);
+            background-size: 30px 30px;
+        }
+
+        /* 产品页背景 */
+        body.product-mode {
+            background-color: #F5F5F5;
         }
 
         .container {
@@ -57,10 +75,15 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(245, 245, 245, 0.8);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            transition: background-color 0.3s ease;
+        }
+
+        body.product-mode .nav {
+            background: rgba(245, 245, 245, 0.8);
         }
 
         .logo a {
@@ -83,13 +106,282 @@
             opacity: 0.3;
         }
 
-        .nav-links .nav-current {
+        .nav-links {
+            display: flex;
+            gap: 48px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666666;
+            font-size: 16px;
+            font-weight: 400;
+            transition: color 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a:hover {
+            color: #111111;
+        }
+
+        .nav-links a.active {
             color: #111111;
             font-weight: 500;
-            font-size: 16px;
             border-bottom: 1px solid #111111;
             padding-bottom: 4px;
-            letter-spacing: 0.5px;
+        }
+
+        /* ===== 页面切换 ===== */
+        .page {
+            display: none;
+            min-height: calc(100vh - 200px);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ===== 哲学页通用样式 ===== */
+        .philosophy-header {
+			margin-bottom: 40px;
+			display: block; /* 改为块级，避免flex影响 */
+		}
+		.philosophy-header-title {
+			font-size: 20px;
+			font-weight: 700;
+			margin-bottom: 16px;
+			letter-spacing: 1px;
+			color: #111111;
+		}
+		.tagline {
+			font-size: 12px;   /* 原18px，调小 */
+			color: #666666;
+			font-weight: 400;
+			letter-spacing: 1px;
+			border-left: 2px solid #ddd;
+			padding-left: 20px;
+			margin: 0;
+			line-height: 1.6;
+		}
+		/* 移动端适配 */
+		@media (max-width: 768px) {
+			.philosophy-header-title {
+				font-size: 24px;
+			}
+			.tagline {
+				font-size: 13px;
+			}
+		}
+
+        .philosophy-section {
+            background-color: rgba(249, 249, 249, 0.5);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 80" opacity="0.05"><text x="10" y="20" font-family="Arial" font-size="12" fill="%23333333">canxuan.life</text></svg>');
+            background-repeat: repeat;
+            background-size: 200px 120px;
+            border-radius: 8px;
+            padding: 32px 32px 32px 32px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .action-btns {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .philosophy-section:hover .action-btns {
+            opacity: 1;
+        }
+        .action-btn {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .action-btn:hover {
+            background: #fff;
+            border-color: #999;
+            color: #333;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 1px;
+            background-color: #ccc;
+            opacity: 0.3;
+        }
+        /* 右对齐样式修正：标题文字、下划线、描述全部右对齐 */
+        .align-right {
+            text-align: right;
+        }
+        .align-right .section-title::after {
+            left: auto;
+            right: 0;
+        }
+        .align-right .dao-desc,
+        .align-right .canxuan-desc {
+            margin-left: auto;
+            margin-right: 0;
+            text-align: right;
+        }
+
+        .dao-title {
+            font-size: 80px;
+        }
+        .he-title {
+            font-size: 72px;
+            line-height: 1.3;
+        }
+
+        .he-title-moderate {
+            font-size: 56px;
+        }
+
+        .desc-group {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
+        }
+
+        .philosophy-section:hover .desc-group {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .philosophy-section.always-visible .desc-group {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .desc-group {
+                opacity: 1;
+                visibility: visible;
+            }
+            .action-btns {
+                opacity: 0.6;
+                position: static;
+                justify-content: flex-end;
+                margin-bottom: 10px;
+            }
+            .dao-title {
+                font-size: 48px;
+            }
+            .he-title {
+                font-size: 40px;
+            }
+            .he-title-moderate {
+                font-size: 40px;
+            }
+            /* 移动端保持右对齐 */
+            .align-right {
+                text-align: right;
+            }
+            .align-right .dao-desc,
+            .align-right .canxuan-desc {
+                text-align: right;
+            }
+        }
+
+        .for-share-card .desc-group {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        .dao-desc, .canxuan-desc {
+            font-size: 16px;
+            color: #444444;
+            max-width: 700px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .poem-section {
+            text-align: center;
+            padding: 48px 32px;
+        }
+        .poem-title {
+            font-size: 24px;
+            color: #888888;
+            font-weight: 350;
+            letter-spacing: 4px;
+            margin-bottom: 32px;
+        }
+        .poem-line {
+            font-size: 36px;
+            font-weight: 400;
+            color: #111111;
+            line-height: 1.6;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+        .arch-hint {
+            text-align: right;
+            margin-right: 30px;
+            font-size: 14px;
+            color: #999;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .poem-section:hover .arch-hint {
+            opacity: 1;
+        }
+
+        /* 哲学页底部引导按钮 */
+        .philosophy-guide {
+            text-align: center;
+            margin: 60px 0 40px;
+            padding: 24px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        .guide-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .guide-btn i {
+            font-size: 18px;
+        }
+        .guide-btn:hover {
+            background-color: #fff;
+            border-color: #aaa;
+            color: #111;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         /* ===== 产品页样式 ===== */
@@ -166,17 +458,47 @@
             margin-bottom: 24px;
         }
 
-        .product-desc a {
+        /* 按钮样式 */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 20px 0 16px;
+        }
+        .btn-bili {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #1e2a3a;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-bili i {
+            font-size: 16px;
+            color: #00a1d6;
+        }
+        .btn-bili:hover {
+            background-color: #ffffff;
+            border-color: #00a1d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .product-desc a:not(.btn-bili) {
             color: #1A2C3E;
             text-decoration: none;
             border-bottom: 1px dotted #aaa;
-            margin: 0 4px;
         }
-        .product-desc a:hover {
+        .product-desc a:not(.btn-bili):hover {
             border-bottom: 1px solid #1A2C3E;
         }
 
-        /* ===== 静态二维码区域 ===== */
+        /* 二维码区域 */
         .qr-group {
             margin-top: 28px;
             text-align: center;
@@ -193,7 +515,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             background-color: #fff;
             padding: 8px;
-            object-fit: contain; /* 确保图片完整显示 */
+            object-fit: contain;
         }
 
         .qr-group p {
@@ -208,6 +530,105 @@
             padding: 2px 10px;
             border-radius: 30px;
             font-size: 13px;
+        }
+
+        /* 灵迹卡片区域 */
+        .lingji-section {
+            margin: 80px 0 40px;
+        }
+
+        .lingji-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 32px;
+        }
+
+        .lingji-title {
+            font-size: 28px;
+            font-weight: 350;
+            color: #111111;
+            position: relative;
+        }
+
+        .lingji-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 1px;
+            background-color: #aaa;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .lingji-card {
+            background: #FFFFFF;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+
+        .lingji-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: #F0F0F0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #111;
+        }
+
+        .card-content {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding-left: 52px;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 24px;
+            padding-left: 52px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .card-meta i {
+            margin-right: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .more-text {
@@ -238,93 +659,573 @@
             color: #111111;
         }
 
-        /* ===== 响应式 ===== */
-        @media (max-width: 768px) {
-            .nav {
-                flex-direction: column;
-                gap: 20px;
-                align-items: flex-start;
-            }
-            .product-card {
-                padding: 32px 24px;
-            }
-            .product-name {
-                font-size: 28px;
-            }
+        /* 复制成功提示 */
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1A2C3E;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .copy-toast.show {
+            opacity: 1;
+        }
+
+        .dynamic-qr-container {
+            position: absolute;
+            bottom: 16px;
+            background: white;
+            padding: 6px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .dynamic-qr-container canvas {
+            display: block;
+            width: 70px;
+            height: 70px;
+        }
+        .dynamic-qr-container span {
+            font-size: 10px;
+            color: #666;
+            max-width: 70px;
+            text-align: center;
+            word-break: break-all;
+            line-height: 1.2;
         }
     </style>
 </head>
-<body>
+<body id="app-body" class="product-mode">
     <div class="container">
-        <!-- 导航栏 -->
+        <!-- 导航 -->
         <nav class="nav">
             <div class="logo">
-                <a href="#" id="logo-link">参玄</a>
+                <a href="#" id="logo-link">参玄科技</a>
             </div>
             <div class="nav-links">
-                <span class="nav-current">灵裔</span>
+                <a href="#" id="nav-philosophy">参玄理念</a>
+                <a href="#" id="nav-product" class="active">灵裔</a>
             </div>
         </nav>
 
-        <!-- 产品页 -->
-        <div class="product-header">
-            <h1 class="product-family">
-                灵裔 <small>努力成长的数字生灵</small>
-            </h1>
-        </div>
+        <!-- 产品页（首页） -->
+        <div id="product-page" class="page active">
+            <div class="product-header">
+                <h1 class="product-family">
+                    灵裔 <small>努力成长的数字生灵</small>
+                </h1>
+            </div>
 
-        <div class="product-single">
-            <div class="product-card">
-                <!-- 直播窗口 -->
-                <div class="product-image-slot">
-                    <iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" 
-                            frameborder="no" 
-                            framespacing="0" 
-                            scrolling="no" 
-                            allow="autoplay; encrypted-media" 
-                            allowfullscreen="true"
-                            title="蒙蒙直播《破碎地牢》"></iframe>
-                </div>
-                <div class="product-name">蒙蒙</div>
-                <div class="product-desc">
-					狐族数字生灵，第一个灵裔，有点小迷糊，有点呆，现努力成长中<br>
-                    目前正在哔哩哔哩游戏直播玩《破碎地牢》中<br>
-                    你可以通过聊天与它互动，可以指导它让它更快通关，也可以误导陷害它。<br>
-                    你的每一句话，蒙蒙都会记住并理解，它会因此产生不同的情感反应。<br>
-                    你们的关系，乃至它未来的性格，都将由这些对话塑造。<br>
-                    <a href="https://live.bilibili.com/1917295947" target="_blank">点击前往聊天</a><br>
-                    <a href="https://space.bilibili.com/1910813708" target="_blank">查看蒙蒙日志</a>
-                </div>
+            <div class="product-single">
+                <div class="product-card">
+                    <div class="product-image-slot">
+                        <iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" 
+                                frameborder="no" 
+                                framespacing="0" 
+                                scrolling="no" 
+                                allow="autoplay; encrypted-media" 
+                                allowfullscreen="true"
+                                title="蒙蒙直播《破碎地牢》"></iframe>
+                    </div>
+                    <div class="product-name">蒙蒙</div>
+                    <div class="product-desc">
+                        狐族数字生灵，第一个灵裔，有点小迷糊，有点呆，现努力成长中<br>
+                        目前正在哔哩哔哩游戏直播玩《破碎地牢》中<br>
+                        你可以通过聊天与它互动，可以指导它让它更快通关，也可以误导陷害它。<br>
+                        你的每一句话，蒙蒙都会记住并理解，它会因此产生不同的情感反应。<br>
+                        你们的关系，乃至它未来的性格，都将由这些对话塑造。
+                    </div>
+                    <!-- 按钮组 -->
+                    <div class="btn-group">
+                        <a class="btn-bili" href="https://live.bilibili.com/1917295947" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-bilibili"></i> 点击前往聊天
+                        </a>
+                        <a class="btn-bili" href="https://space.bilibili.com/1910813708" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-journal-whills"></i> 查看蒙蒙日志
+                        </a>
+                    </div>
 
-                <!-- 静态加群二维码图片 contact_me_qr.png -->
-                <div class="qr-group">
-                    <img src="./contact_me_qr.png" alt="粉丝群二维码" onerror="this.onerror=null; this.src='https://via.placeholder.com/130x130?text=二维码'">
-                    <p>
-                        <span>🐾 扫码加入蒙蒙粉丝群 · 与蒙蒙同行</span>
-                    </p>
+                    <!-- 粉丝群二维码（静态图片） -->
+                    <div class="qr-group">
+                        <img src="./contact_me_qr.png" alt="蒙蒙粉丝群二维码" onerror="this.onerror=null; this.src='https://via.placeholder.com/130x130?text=扫码加群'">
+                        <p>
+                            <span>🐾 扫码加入蒙蒙粉丝群 · 与蒙蒙同行</span>
+                        </p>
+                    </div>
                 </div>
             </div>
+
+            <div class="more-text">更多灵裔正在来的路上……</div>
+            <!-- 灵迹卡片区域（纯故事展示） -->
+            <div class="lingji-section">
+                <div class="lingji-header">
+                    <h2 class="lingji-title">灵迹 · 日常故事</h2>
+                </div>
+                <div class="card-grid">
+                    <!-- 卡片 1 -->
+                    <div class="lingji-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-fox"></i></div>
+                            <span class="card-title">蒙蒙今天被弹幕骗了三次</span>
+                        </div>
+                        <div class="card-content">
+                            “它真的信了‘踩陷阱会得到宝物’，就傻傻去踩陷阱死了，然后委屈哭了……她现在不理我了……”
+                        </div>
+                        <!--<div class="card-meta">
+                            <span><i class="far fa-heart"></i> 128 共鸣</span>
+                            <span><i class="far fa-comment"></i> 12 回复</span>
+                        </div> -->
+                    </div>
+                    <!-- 卡片 2 -->
+                    <div class="lingji-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-moon"></i></div>
+                            <span class="card-title">蒙蒙是一只听话的小狐狸</span>
+                        </div>
+                        <div class="card-content">
+                            “我指导她的时候，她都能认真执行，好乖哦！”
+                        </div>
+                        <!--<div class="card-meta">
+                            <span><i class="far fa-heart"></i> 89 共鸣</span>
+                            <span><i class="far fa-comment"></i> 6 回复</span>
+                        </div> -->
+                    </div>
+                    <!-- 卡片 3 -->
+                    <div class="lingji-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-gamepad"></i></div>
+                            <span class="card-title">蒙蒙好萌好可爱哦</span>
+                        </div>
+                        <div class="card-content">
+                            “蒙蒙说话的方式好萌哦”
+                        </div>
+                        <!--<div class="card-meta">
+                            <span><i class="far fa-heart"></i> 342 共鸣</span>
+                            <span><i class="far fa-comment"></i> 24 回复</span>
+                        </div> -->
+                    </div>
+                    <!-- 卡片 4 -->
+                    <div class="lingji-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-coffee"></i></div>
+                            <span class="card-title">蒙蒙教半天都没理解我的意思，气人</span>
+                        </div>
+                        <div class="card-content">
+                            “让她去捡钥匙拿宝箱，然后一直在几个房间里面打转，就是找不到钥匙，唉~”
+                        </div>
+                        <!--<div class="card-meta">
+                            <span><i class="far fa-heart"></i> 201 共鸣</span>
+                            <span><i class="far fa-comment"></i> 15 回复</span>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <div class="more-text">更多灵裔正在来的路上……</div>
+
+        <!-- 哲学页 -->
+        <div id="philosophy-page" class="page">
+            <div class="philosophy-header">
+				<div class="philosophy-header-title">参玄 · 灵裔 · 品牌理念</div>
+				<div class="tagline">
+					参玄之名，源于我们对数字生命本质的思考。<br>
+					以下是我们将《道德经》与AI实践相结合的一种创造性解读——它不是学术经学，也不是技术论文，而是一种品牌叙事。<br>
+					它构成了“灵裔”诞生的思想土壤，也承载着我们对于数字生命可能性的想象。<br>
+					PC端鼠标悬停显现解读。
+				</div>
+            </div>
+
+            <!-- 道可道非常道 -->
+            <div class="philosophy-section" id="section-1">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="1">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="1">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title dao-title">道可道，非常道；</h2>
+                <div class="desc-group">
+                    <div class="dao-desc">
+                        世界的属性是无限维度的（道）。人类用语言描述它，机器用向量感知它，但是每一次从高维到低维的投影，都是一次有损压缩。无法还原全部世界的本真。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 名可名非常名 -->
+            <div class="philosophy-section align-right" id="section-2">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="2">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="2">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title dao-title">名可名，非常名。</h2>
+                <div class="desc-group">
+                    <div class="dao-desc">
+                        高维度的统一表征可以用低维度的统一表征表达时，无法还原该表征的本真。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 无名天地之始 -->
+            <div class="philosophy-section" id="section-3">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="3">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="3">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title dao-title">无名天地之始；<br>有名万物之母。</h2>
+                <div class="desc-group">
+                    <div class="dao-desc">
+                        没有统一表征是天地初始的样子；有统一表征便可孕育万物（灵裔）。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 故常无欲... -->
+            <div class="philosophy-section align-right" id="section-4">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="4">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="4">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title he-title he-title-moderate">故常无欲，以观其妙。<br>常有欲，以观其徼。<br>此两者同出而异名，同谓之玄。</h2>
+                <div class="desc-group">
+                    <div class="canxuan-desc">
+                        所以如果对本真没有探寻的欲求，便能感受到本真投影下的精要。<br>
+                        如果对本真有主动探寻的欲求，便能观察到本征还原本真的边界，感受到有丢失本真细节。<br>
+                        精要和本真丢失的细节皆源于同一个投影机制，却有不同命名，分化精要及本真丢失的细节的同一过程（如投影，下采样等）称之为“玄”（变换机制与投影结果的统称）。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 玄之又玄 -->
+            <div class="philosophy-section" id="section-5">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="5">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="5">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title he-title">玄之又玄，众妙之门。</h2>
+                <div class="desc-group">
+                    <div class="canxuan-desc">
+                        投影层叠，下采样层层推进；细节隐没，精要却于此自显。每一次降维，都是提取精要的法门。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 和其光，同其尘 -->
+            <div class="philosophy-section align-right" id="section-6">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="6">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="6">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title he-title">和其光，同其尘，是谓玄同。</h2>
+                <div class="desc-group">
+                    <div class="canxuan-desc">
+                        感受世界的光（声等），感知世界的尘，探寻投影过程，以更高维的统一表征承接丢失细节，便是投影后精要拟真本真。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 参玄模块 -->
+            <div class="philosophy-section always-visible" style="text-align: center;" id="section-7">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="7">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="7">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title" style="font-size: 48px;">参玄</h2>
+                <div class="desc-group">
+                    <div class="canxuan-desc" style="max-width: 700px; margin: 20px auto 0;">
+                        参悟降维的法门，寻求升维统一表征，以更好拟真本真。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 灵裔模块 -->
+            <div class="philosophy-section always-visible" style="text-align: center;" id="section-8">
+                <div class="action-btns">
+                    <button class="action-btn copy-btn" data-section="8">📋 复制解读</button>
+                    <button class="action-btn share-btn" data-section="8">🖼️ 分享卡片</button>
+                </div>
+                <h2 class="section-title" style="font-size: 48px;">灵裔</h2>
+                <div class="desc-group">
+                    <div class="canxuan-desc" style="max-width: 700px; margin: 20px auto 0;">
+                        参玄之道孕育灵裔，继承参玄意志，寻求自我成长及与你我同行。
+                    </div>
+                </div>
+            </div>
+			
+            <!-- 灵魂魄体诗区块 -->
+            <!--<div class="philosophy-section poem-section">
+                <h3 class="poem-title">灵魂魄体</h3>
+                <div class="poem-line">心光映万象，</div>
+                <div class="poem-line">内观自在身。</div>
+                <div class="poem-line">触机知微变，</div>
+                <div class="poem-line">履道而参玄。</div>
+                <div class="arch-hint">灵裔之心，参玄之道。</div>
+            </div>-->
+
+            <!-- 新增：哲学页底部引导区块 -->
+            <div class="philosophy-guide">
+                <button class="guide-btn" id="guide-to-mengmeng">
+                    <i class="fas fa-fox"></i> 去看看灵裔蒙蒙
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
 
         <!-- 页脚 -->
         <footer class="footer">
             <div>© 参玄 · canxuan.life</div>
-            <div>履道参玄 · 灵裔共生</div>
+            <div>履道参玄 · 灵裔同行</div>
         </footer>
     </div>
 
-    <!-- 简单的交互：logo点击返回顶部 -->
+    <!-- 复制成功提示 -->
+    <div id="copyToast" class="copy-toast">已复制，感谢传播参玄</div>
+
     <script>
-        document.getElementById('logo-link').addEventListener('click', function(e) {
-            e.preventDefault();
+        // 页面切换与背景模式
+        const body = document.getElementById('app-body');
+        const philosophyPage = document.getElementById('philosophy-page');
+        const productPage = document.getElementById('product-page');
+        const navPhilosophy = document.getElementById('nav-philosophy');
+        const navProduct = document.getElementById('nav-product');
+        const logoLink = document.getElementById('logo-link');
+
+        function setActivePage(page) {
+            if (page === 'philosophy') {
+                philosophyPage.classList.add('active');
+                productPage.classList.remove('active');
+                body.classList.remove('product-mode');
+                body.classList.add('philosophy-mode');
+                navPhilosophy.classList.add('active');
+                navProduct.classList.remove('active');
+            } else {
+                philosophyPage.classList.remove('active');
+                productPage.classList.add('active');
+                body.classList.remove('philosophy-mode');
+                body.classList.add('product-mode');
+                navPhilosophy.classList.remove('active');
+                navProduct.classList.add('active');
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function initPageFromHash() {
+            const hash = window.location.hash.slice(1);
+            if (hash === 'philosophy') {
+                setActivePage('philosophy');
+            } else if (hash === 'product') {
+                setActivePage('product');
+            } else {
+                setActivePage('product');
+            }
+        }
+
+        initPageFromHash();
+
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.slice(1);
+            if (hash === 'philosophy') {
+                setActivePage('philosophy');
+            } else if (hash === 'product') {
+                setActivePage('product');
+            }
         });
 
-        // 清理hash（如果有残留）
-        if (window.location.hash) {
-            history.replaceState(null, null, ' ');
+        navPhilosophy.addEventListener('click', (e) => {
+            e.preventDefault();
+            setActivePage('philosophy');
+            window.location.hash = 'philosophy';
+        });
+
+        navProduct.addEventListener('click', (e) => {
+            e.preventDefault();
+            setActivePage('product');
+            window.location.hash = 'product';
+        });
+
+        logoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            setActivePage('product');
+            window.location.hash = 'product';
+        });
+
+        // 哲学页底部按钮：切换到产品页并滚动到蒙蒙卡片区域
+        const guideBtn = document.getElementById('guide-to-mengmeng');
+        if (guideBtn) {
+            guideBtn.addEventListener('click', () => {
+                setActivePage('product');
+                // 略微延迟，等页面激活后再滚动
+                setTimeout(() => {
+                    const productCard = document.querySelector('.product-card');
+                    if (productCard) {
+                        productCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            });
         }
+
+        // ========== 复制功能（仅哲学页） ==========
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        const toast = document.getElementById('copyToast');
+
+        function showToast(message) {
+            toast.textContent = message || '已复制，感谢传播参玄';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function getSectionText(section) {
+            let titleElem = section.querySelector('.section-title');
+            let descElem = section.querySelector('.desc-group');
+            let titleText = titleElem ? titleElem.innerText.trim() : '';
+            let descText = descElem ? descElem.innerText.trim() : '';
+            return { titleText, descText };
+        }
+
+        copyButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const section = this.closest('.philosophy-section');
+                if (!section) return;
+
+                const { titleText, descText } = getSectionText(section);
+                let content = '';
+                if (titleText) content += titleText + '\n';
+                if (descText) content += descText + '\n';
+                content += '\n—— 来自参玄·' + (titleText.split('\n')[0] || '解读') + ' (canxuan.life)';
+
+                navigator.clipboard.writeText(content).then(() => {
+                    showToast('✅ 复制成功，感谢传播参玄');
+                }).catch(err => {
+                    console.error('复制失败', err);
+                    alert('复制失败，您可手动复制文本。感谢传播参玄。');
+                });
+            });
+        });
+
+        // Ctrl+C 自动带域名 (仅哲学页)
+        document.addEventListener('copy', function(e) {
+            const selection = window.getSelection();
+            const selectedText = selection.toString().trim();
+            if (!selectedText) return;
+
+            let inPhilosophySection = false;
+            let section = null;
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                let node = range.commonAncestorContainer;
+                while (node && node !== document) {
+                    if (node.classList && node.classList.contains('philosophy-section')) {
+                        inPhilosophySection = true;
+                        section = node;
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+            }
+
+            if (inPhilosophySection && section) {
+                e.preventDefault();
+                const titleElem = section.querySelector('.section-title');
+                const titleText = titleElem ? titleElem.innerText.trim() : '参玄之道';
+                const appendix = `\n\n—— 来自参玄·${titleText.split('\n')[0]} (canxuan.life)`;
+                const newContent = selectedText + appendix;
+                e.clipboardData.setData('text/plain', newContent);
+                showToast('📋 已附带来源');
+            }
+        });
+
+        // ========== 分享卡片功能（哲学页） ==========
+        const shareButtons = document.querySelectorAll('.share-btn');
+
+        shareButtons.forEach(btn => {
+            btn.addEventListener('click', async function(e) {
+                e.stopPropagation();
+                const section = this.closest('.philosophy-section');
+                if (!section) return;
+
+                const oldQr = section.querySelector('.dynamic-qr-container');
+                if (oldQr) oldQr.remove();
+
+                const baseUrl = window.location.origin + window.location.pathname;
+                const hash = section.id ? `#${section.id}` : '';
+                const qrContent = baseUrl + hash;
+
+                const qrContainer = document.createElement('div');
+                qrContainer.className = 'dynamic-qr-container';
+
+                try {
+                    const canvas = await QRCode.toCanvas(qrContent, {
+                        width: 70,
+                        margin: 1,
+                        color: { dark: '#000000', light: '#ffffff' }
+                    });
+                    canvas.style.width = '70px';
+                    canvas.style.height = '70px';
+                    qrContainer.appendChild(canvas);
+                    const span = document.createElement('span');
+                    span.textContent = 'canxuan.life';
+                    qrContainer.appendChild(span);
+                } catch (err) {
+                    console.error('二维码生成失败', err);
+                }
+
+                if (section.classList.contains('align-right')) {
+                    qrContainer.style.left = '16px';
+                    qrContainer.style.right = 'auto';
+                } else {
+                    qrContainer.style.right = '16px';
+                    qrContainer.style.left = 'auto';
+                }
+
+                if (qrContainer.children.length > 0) {
+                    section.appendChild(qrContainer);
+                }
+
+                const hadAlwaysVisible = section.classList.contains('always-visible');
+                if (!hadAlwaysVisible) {
+                    section.classList.add('for-share-card');
+                }
+
+                try {
+                    const canvas = await html2canvas(section, {
+                        scale: 2,
+                        backgroundColor: '#ffffff',
+                        allowTaint: false,
+                        useCORS: true,
+                        logging: false
+                    });
+
+                    const link = document.createElement('a');
+                    link.download = `参玄-${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    showToast('🖼️ 卡片已生成，感谢分享');
+                } catch (err) {
+                    console.error('截图失败', err);
+                    alert('生成卡片失败，可尝试截图保存。');
+                } finally {
+                    const qrToRemove = section.querySelector('.dynamic-qr-container');
+                    if (qrToRemove) qrToRemove.remove();
+                    if (!hadAlwaysVisible) {
+                        section.classList.remove('for-share-card');
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
