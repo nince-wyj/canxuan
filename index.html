@@ -1263,8 +1263,7 @@
         });
 
         // ========== 新增：根据直播状态动态替换播放器内容（未开播显示封面+文字） ==========
-        const MENG_UID = 1910813708;
-        const API_URL = `https://api.live.bilibili.com/room/v1/Room/get_info?room_id=1917295947`;
+        const API_URL = `/api/bilibili-live`;
         const playerSlot = document.getElementById('player-slot');
 
         // 辅助：转义HTML（用于标题等，但此处主要用图片地址）
@@ -1315,7 +1314,12 @@
                 const response = await fetch(API_URL, { cache: 'no-store' });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const result = await response.json();
-                updatePlayerByLiveStatus(result);
+                if (result.code === 0 && result.data) {
+					updatePlayerByLiveStatus(result.data);
+				} else {
+					console.warn('API返回异常', result);
+					showIframe();
+				}
             } catch (error) {
                 console.error('获取直播状态失败，保留默认iframe', error);
                 showIframe(); // 失败时默认显示iframe
