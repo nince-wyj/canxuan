@@ -432,16 +432,50 @@
             background: transparent;
             border: none;
             line-height: 0;
+            position: relative;
         }
 
-        .product-image-slot iframe {
+        .product-image-slot iframe,
+        .product-image-slot .offline-cover {
             width: 100%;
-            height: auto;
             aspect-ratio: 700 / 400;
             display: block;
             border-radius: 8px;
             background-color: #1e1e1e;
             border: none;
+        }
+
+        .product-image-slot .offline-cover {
+            object-fit: cover;
+            position: relative;
+        }
+
+        .offline-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 500;
+            padding: 8px 22px;
+            border-radius: 48px;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.2);
+            pointer-events: none;
+            z-index: 2;
+            font-family: system-ui, 'Segoe UI', 'PingFang SC', sans-serif;
+        }
+
+        @media (max-width: 560px) {
+            .offline-label {
+                font-size: 1rem;
+                padding: 6px 16px;
+                white-space: nowrap;
+            }
         }
 
         .product-name {
@@ -731,7 +765,8 @@
 
             <div class="product-single">
                 <div class="product-card">
-                    <div class="product-image-slot">
+                    <!-- 播放器区域：动态切换 iframe / 封面图片 -->
+                    <div class="product-image-slot" id="player-slot">
                         <iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" 
                                 frameborder="no" 
                                 framespacing="0" 
@@ -740,6 +775,7 @@
                                 allowfullscreen="true"
                                 title="蒙蒙直播《破碎地牢》"></iframe>
                     </div>
+
                     <div class="product-name">蒙蒙</div>
                     <div class="product-desc">
                         狐族数字生灵，第一个灵裔，有点小迷糊，有点呆，现努力成长中<br>
@@ -748,6 +784,7 @@
                         你的每一句话，蒙蒙都会记住并理解，它会因此产生不同的情感反应。<br>
                         你们的关系，乃至它未来的性格，都将由这些对话塑造。
                     </div>
+
                     <!-- 按钮组 -->
                     <div class="btn-group">
                         <a class="btn-bili" href="https://live.bilibili.com/1917295947" target="_blank" rel="noopener noreferrer">
@@ -833,7 +870,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- 哲学页 -->
@@ -992,7 +1028,7 @@
     <div id="copyToast" class="copy-toast">已复制，感谢传播参玄</div>
 
     <script>
-        // 页面切换与背景模式
+        // ========== 原有页面切换与功能 ==========
         const body = document.getElementById('app-body');
         const philosophyPage = document.getElementById('philosophy-page');
         const productPage = document.getElementById('product-page');
@@ -1064,7 +1100,6 @@
         if (guideBtn) {
             guideBtn.addEventListener('click', () => {
                 setActivePage('product');
-                // 略微延迟，等页面激活后再滚动
                 setTimeout(() => {
                     const productCard = document.querySelector('.product-card');
                     if (productCard) {
@@ -1226,6 +1261,70 @@
                 }
             });
         });
+
+        // ========== 新增：根据直播状态动态替换播放器内容（未开播显示封面+文字） ==========
+        const MENG_UID = 1910813708;
+        const API_URL = `https://api.live.bilibili.com/room/v1/Room/get_info?room_id=1917295947`;
+        const playerSlot = document.getElementById('player-slot');
+
+        // 辅助：转义HTML（用于标题等，但此处主要用图片地址）
+        function updatePlayerByLiveStatus(data) {
+            if (!data || data.live_status === undefined) {
+                // 出错时保守显示默认iframe（正常直播内容）
+                showIframe();
+                return;
+            }
+
+            const liveStatus = data.live_status; // 0未开播 1直播中 2轮播
+            const coverUrl = data.user_cover || '';
+
+            if (liveStatus === 1 || liveStatus === 2) {
+                // 直播中或轮播中 -> 显示 iframe
+                showIframe();
+            } else {
+                // 未开播 -> 显示封面图片 + 叠加文字
+                showOfflineCover(coverUrl);
+            }
+        }
+
+        function showIframe() {
+            playerSlot.innerHTML = `
+                <iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" 
+                        frameborder="no" 
+                        framespacing="0" 
+                        scrolling="no" 
+                        allow="autoplay; encrypted-media" 
+                        allowfullscreen="true"
+                        title="蒙蒙直播《破碎地牢》"></iframe>
+            `;
+        }
+
+        function showOfflineCover(coverUrl) {
+            // 如果没有封面，使用一张默认的占位图（可替换为蒙蒙默认图）
+            const finalCover = coverUrl || 'https://i0.hdslb.com/bfs/live/new_room_cover/ea1351bfac3925111aef10801f5c8196f3766199.jpg';
+            playerSlot.innerHTML = `
+                <div style="position: relative; width: 100%; aspect-ratio: 700 / 400; border-radius: 8px; overflow: hidden;">
+                    <img src="${finalCover}" alt="蒙蒙未开播封面" class="offline-cover" style="width:100%; height:100%; object-fit: cover; display:block;">
+                    <div class="offline-label">暂未开播</div>
+                </div>
+            `;
+        }
+
+        async function fetchAndUpdatePlayer() {
+            try {
+                const response = await fetch(API_URL, { cache: 'no-store' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const result = await response.json();
+                updatePlayerByLiveStatus(result);
+            } catch (error) {
+                console.error('获取直播状态失败，保留默认iframe', error);
+                showIframe(); // 失败时默认显示iframe
+            }
+        }
+
+        // 立即执行一次，之后每90秒刷新
+        fetchAndUpdatePlayer();
+        setInterval(fetchAndUpdatePlayer, 90 * 1000);
     </script>
 </body>
 </html>
