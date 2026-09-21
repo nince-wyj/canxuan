@@ -76,6 +76,19 @@
 				font-size: 14px;
 			}
 		}
+		.chat-status {
+			font-size: 13px;
+			color: #888;
+			margin-top: 6px;
+			min-height: 18px;
+			transition: opacity 0.3s;
+		}
+		.chat-status.ok {
+			color: #52a552;
+		}
+		.chat-status.error {
+			color: #cc6600;
+		}
     </style>
 </head>
 <body id="app-body" class="product-mode">
@@ -101,6 +114,7 @@
                         
                         <button id="chat-send-btn" onclick="sendChat()">发送</button>
                     </div>
+					<div id="chat-status" class="chat-status"></div>
                 </div>
                 <!-- ========== 弹幕发送区结束 ========== -->
                 <div class="product-name">蒙蒙</div>
@@ -191,28 +205,54 @@
         })();
         const chatInput = document.getElementById('chat-input');
 		const chatSendBtn = document.getElementById('chat-send-btn');
+		const chatStatus = document.getElementById('chat-status');
+
+		function setStatus(text, cls) {
+			chatStatus.textContent = text;
+			chatStatus.className = 'chat-status ' + (cls || '');
+			if (text) {
+				clearTimeout(chatStatus._timer);
+				chatStatus._timer = setTimeout(() => {
+					chatStatus.textContent = '';
+					chatStatus.className = 'chat-status';
+				}, 3000);
+			}
+		}
 
 		async function sendChat() {
 			let text = chatInput.value.trim();
 			if (!text) return;
 			if (text.length > 40) { text = text.substring(0, 40); }
 
-			addChatMsg('已发送：' + text, 'user');
 			chatInput.value = '';
 			chatSendBtn.disabled = true;
+			setStatus('发送中...', '');
 
 			try {
 				const resp = await fetch('/api/danmu', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ message: text, visitorId: visitorId, user: '游客_' + visitorId.slice(-4) })
+					body: JSON.stringify({
+						message: text,
+						visitorId: visitorId,
+						user: '游客_' + visitorId.slice(-4)
+					})
 				});
+
 				if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
 				const data = await resp.json();
-				if (data.status === 'ok') { addChatMsg('✅ 蒙蒙收到啦，请听直播间语音回应', 'system'); }
-				else { addChatMsg('⚠️ ' + (data.message || '发送异常'), 'system'); }
+
+				if (data.status === 'ok') {
+					setStatus('✅ 蒙蒙收到啦，请听直播间语音回应', 'ok');
+				} else if (data.status === 'blocked') {
+					setStatus('⚠️ 内容不符合规范，已被安全过滤', 'error');
+				} else {
+					setStatus('⚠️ ' + (data.message || '发送异常'), 'error');
+				}
 			} catch (e) {
-				addChatMsg('❌ 发送失败，请稍后重试', 'system');
+				console.error('发送失败', e);
+				setStatus('❌ 发送失败，请稍后重试', 'error');
 			} finally {
 				chatSendBtn.disabled = false;
 				chatInput.focus();
@@ -220,7 +260,10 @@
 		}
 
 		chatInput.addEventListener('keydown', function(e) {
-			if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+			if (e.key === 'Enter' && !e.shiftKey) {
+				e.preventDefault();
+				sendChat();
+			}
 		});
     </script>
 </body>
