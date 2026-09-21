@@ -189,57 +189,39 @@
             sessionStorage.setItem('visitorId', id);
             return id;
         })();
-        const chatBox = document.getElementById('chat-box');
         const chatInput = document.getElementById('chat-input');
-        const chatSendBtn = document.getElementById('chat-send-btn');
-        const charCount = document.getElementById('char-count');
+		const chatSendBtn = document.getElementById('chat-send-btn');
 
-        function addChatMsg(text, cls) {
-            const div = document.createElement('div');
-            div.className = 'msg ' + cls;
-            div.textContent = text;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+		async function sendChat() {
+			let text = chatInput.value.trim();
+			if (!text) return;
+			if (text.length > 40) { text = text.substring(0, 40); }
 
-        chatInput.addEventListener('input', function() {
-            const len = chatInput.value.length;
-            charCount.textContent = len + '/40';
-            charCount.classList.toggle('warn', len >= 35);
-        });
+			addChatMsg('已发送：' + text, 'user');
+			chatInput.value = '';
+			chatSendBtn.disabled = true;
 
-        async function sendChat() {
-            let text = chatInput.value.trim();
-            if (!text) return;
-            if (text.length > 40) { text = text.substring(0, 40); }
+			try {
+				const resp = await fetch('/api/danmu', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ message: text, visitorId: visitorId, user: '游客_' + visitorId.slice(-4) })
+				});
+				if (!resp.ok) throw new Error('HTTP ' + resp.status);
+				const data = await resp.json();
+				if (data.status === 'ok') { addChatMsg('✅ 蒙蒙收到啦，请听直播间语音回应', 'system'); }
+				else { addChatMsg('⚠️ ' + (data.message || '发送异常'), 'system'); }
+			} catch (e) {
+				addChatMsg('❌ 发送失败，请稍后重试', 'system');
+			} finally {
+				chatSendBtn.disabled = false;
+				chatInput.focus();
+			}
+		}
 
-            addChatMsg('已发送：' + text, 'user');
-            chatInput.value = '';
-            charCount.textContent = '0/40';
-            charCount.classList.remove('warn');
-            chatSendBtn.disabled = true;
-
-            try {
-                const resp = await fetch('/api/danmu', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, visitorId: visitorId, user: '游客_' + visitorId.slice(-4) })
-                });
-                if (!resp.ok) throw new Error('HTTP ' + resp.status);
-                const data = await resp.json();
-                if (data.status === 'ok') { addChatMsg('✅ 蒙蒙收到啦，请听直播间语音回应', 'system'); }
-                else { addChatMsg('⚠️ ' + (data.message || '发送异常'), 'system'); }
-            } catch (e) {
-                addChatMsg('❌ 发送失败，请稍后重试', 'system');
-            } finally {
-                chatSendBtn.disabled = false;
-                chatInput.focus();
-            }
-        }
-
-        chatInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
-        });
+		chatInput.addEventListener('keydown', function(e) {
+			if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+		});
     </script>
 </body>
 </html>
