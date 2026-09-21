@@ -60,6 +60,7 @@
         .chat-input-row {
             display: flex;
             gap: 8px;
+            align-items: center;
         }
         .chat-input-row input {
             flex: 1;
@@ -72,6 +73,16 @@
         }
         .chat-input-row input:focus {
             border-color: #999;
+        }
+        .char-count {
+            font-size: 12px;
+            color: #aaa;
+            white-space: nowrap;
+            min-width: 40px;
+            text-align: center;
+        }
+        .char-count.warn {
+            color: #cc6600;
         }
         .chat-input-row button {
             padding: 10px 22px;
@@ -95,25 +106,18 @@
 <body id="app-body" class="product-mode">
     <div class="container">
         <div id="header-container"></div>
-
         <div class="product-header">
             <h1 class="product-family">
                 灵裔 <small>努力成长的数字生灵</small>
             </h1>
         </div>
-
         <div class="product-single">
             <div class="product-card">
                 <div class="product-image-slot" id="player-slot">
                     <iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" 
-                            frameborder="no" 
-                            framespacing="0" 
-                            scrolling="no" 
-                            allow="autoplay; encrypted-media" 
-                            allowfullscreen="true"
-                            title="蒙蒙直播《破碎地牢》"></iframe>
+                            frameborder="no" framespacing="0" scrolling="no" allow="autoplay; encrypted-media" 
+                            allowfullscreen="true" title="蒙蒙直播《破碎地牢》"></iframe>
                 </div>
-
                 <div class="product-name">蒙蒙</div>
                 <div class="product-desc">
                     狐族数字生灵，第一个灵裔，有点小迷糊，有点呆，现努力成长中<br>
@@ -122,7 +126,6 @@
                     你的每一句话，蒙蒙都会记住并理解，它会因此产生不同的情感反应。<br>
                     你们的关系，乃至它未来的性格，都将由这些对话塑造。
                 </div>
-
                 <div class="btn-group">
                     <a class="btn-bili" href="https://live.bilibili.com/1917295947" target="_blank" rel="noopener noreferrer">
                         <i class="fab fa-bilibili"></i> 点击前往聊天
@@ -131,142 +134,80 @@
                         <i class="fas fa-journal-whills"></i> 查看蒙蒙日记
                     </a>
                 </div>
-
                 <!-- ========== 弹幕发送区 ========== -->
                 <div class="chat-area">
                     <h3>💬 给蒙蒙发弹幕</h3>
-                    <p class="chat-hint">发送后，蒙蒙会在直播间用语音回应你</p>
+                    <p class="chat-hint">发送后，蒙蒙会在直播间用语音回应你（最多40字）</p>
                     <div class="chat-box" id="chat-box">
                         <div class="msg system">在这里输入你想对蒙蒙说的话，蒙蒙会在直播间回应~</div>
                     </div>
                     <div class="chat-input-row">
                         <input type="text" id="chat-input" placeholder="输入弹幕..." autocomplete="off" maxlength="40">
+                        <span id="char-count" class="char-count">0/40</span>
                         <button id="chat-send-btn" onclick="sendChat()">发送</button>
                     </div>
                 </div>
                 <!-- ========== 弹幕发送区结束 ========== -->
-
                 <div class="qr-group">
                     <img src="./contact_me_qr.png" alt="蒙蒙粉丝群二维码" onerror="this.onerror=null; this.src='https://via.placeholder.com/130x130?text=扫码加群'">
-                    <p>
-                        <span>🐾 扫码加入蒙蒙粉丝群 · 与蒙蒙同行</span>
-                    </p>
+                    <p><span>🐾 扫码加入蒙蒙粉丝群 · 与蒙蒙同行</span></p>
                 </div>
             </div>
         </div>
-
         <div class="more-text">更多灵裔正在来的路上……</div>
-
         <div class="lingji-section">
             <div class="lingji-header">
                 <h2 class="lingji-title">灵迹 · 日常故事</h2>
             </div>
             <div class="card-grid">
                 <div class="lingji-card">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-fox"></i></div>
-                        <span class="card-title">蒙蒙今天被弹幕骗了三次</span>
-                    </div>
-                    <div class="card-content">
-                        “它真的信了‘踩陷阱会得到宝物’，就傻傻去踩陷阱死了，然后委屈哭了……她现在不理我了……”
-                    </div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-fox"></i></div><span class="card-title">蒙蒙今天被弹幕骗了三次</span></div>
+                    <div class="card-content">“它真的信了‘踩陷阱会得到宝物’，就傻傻去踩陷阱死了，然后委屈哭了……她现在不理我了……”</div>
                 </div>
                 <div class="lingji-card">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-moon"></i></div>
-                        <span class="card-title">蒙蒙是一只听话的小狐狸</span>
-                    </div>
-                    <div class="card-content">
-                        “我指导她的时候，她都能认真执行，好乖哦！”
-                    </div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-moon"></i></div><span class="card-title">蒙蒙是一只听话的小狐狸</span></div>
+                    <div class="card-content">“我指导她的时候，她都能认真执行，好乖哦！”</div>
                 </div>
                 <div class="lingji-card">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-gamepad"></i></div>
-                        <span class="card-title">蒙蒙好萌好可爱哦</span>
-                    </div>
-                    <div class="card-content">
-                        “蒙蒙说话的方式好萌哦”
-                    </div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-gamepad"></i></div><span class="card-title">蒙蒙好萌好可爱哦</span></div>
+                    <div class="card-content">“蒙蒙说话的方式好萌哦”</div>
                 </div>
                 <div class="lingji-card">
-                    <div class="card-header">
-                        <div class="card-icon"><i class="fas fa-coffee"></i></div>
-                        <span class="card-title">蒙蒙教半天都没理解我的意思，气人</span>
-                    </div>
-                    <div class="card-content">
-                        “让她去捡钥匙拿宝箱，然后一直在几个房间里面打转，就是找不到钥匙，唉~”
-                    </div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-coffee"></i></div><span class="card-title">蒙蒙教半天都没理解我的意思，气人</span></div>
+                    <div class="card-content">“让她去捡钥匙拿宝箱，然后一直在几个房间里面打转，就是找不到钥匙，唉~”</div>
                 </div>
             </div>
         </div>
-
         <div id="footer-container"></div>
     </div>
-
     <script src="script.js"></script>
     <script>
         // ========== B站直播状态检测 ==========
         const API_URL = `/api/bilibili-live`;
         const playerSlot = document.getElementById('player-slot');
-
         function updatePlayerByLiveStatus(data) {
-            if (!data || data.live_status === undefined) {
-                showIframe();
-                return;
-            }
-            const liveStatus = data.live_status;
-            const coverUrl = data.user_cover || '';
-            if (liveStatus === 1 || liveStatus === 2) {
-                showIframe();
-            } else {
-                showOfflineCover(coverUrl);
-            }
+            if (!data || data.live_status === undefined) { showIframe(); return; }
+            if (data.live_status === 1 || data.live_status === 2) { showIframe(); } else { showOfflineCover(data.user_cover || ''); }
         }
-
         function showIframe() {
-            playerSlot.innerHTML = `
-                <iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" 
-                        frameborder="no" 
-                        framespacing="0" 
-                        scrolling="no" 
-                        allow="autoplay; encrypted-media" 
-                        allowfullscreen="true"
-                        title="蒙蒙直播《破碎地牢》"></iframe>
-            `;
+            playerSlot.innerHTML = `<iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" frameborder="no" framespacing="0" scrolling="no" allow="autoplay; encrypted-media" allowfullscreen="true" title="蒙蒙直播《破碎地牢》"></iframe>`;
         }
-
         function showOfflineCover(coverUrl) {
             if (coverUrl) {
                 var proxyUrl = '/bili-image/' + coverUrl.replace(/^https?:\/\/i0\.hdslb\.com\//, '');
-                playerSlot.innerHTML = `<div style="position: relative; width: 100%; aspect-ratio: 700 / 400; border-radius: 8px; overflow: hidden;">
-                                            <img src="${proxyUrl}" alt="蒙蒙未开播封面" class="offline-cover" style="width:100%; height:100%; object-fit: cover; display:block;">
-                                            <div class="offline-label">暂未开播</div>
-                                        </div>`;
+                playerSlot.innerHTML = `<div style="position: relative; width: 100%; aspect-ratio: 700 / 400; border-radius: 8px; overflow: hidden;"><img src="${proxyUrl}" alt="蒙蒙未开播封面" style="width:100%; height:100%; object-fit: cover; display:block;"><div class="offline-label">暂未开播</div></div>`;
             } else {
-                playerSlot.innerHTML = `<div style="position: relative; width: 100%; aspect-ratio: 700 / 400; border-radius: 8px; overflow: hidden; background: #1e1e1e; display: flex; align-items: center; justify-content: center;">
-                                            <div class="offline-label">暂未开播</div>
-                                        </div>`;
+                playerSlot.innerHTML = `<div style="position: relative; width: 100%; aspect-ratio: 700 / 400; border-radius: 8px; overflow: hidden; background: #1e1e1e; display: flex; align-items: center; justify-content: center;"><div class="offline-label">暂未开播</div></div>`;
             }
         }
-
         async function fetchAndUpdatePlayer() {
             try {
                 const response = await fetch(API_URL, { cache: 'no-store' });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const result = await response.json();
-                if (result.code === 0 && result.data) {
-                    updatePlayerByLiveStatus(result.data);
-                } else {
-                    console.warn('API返回异常', result);
-                    showIframe();
-                }
-            } catch (error) {
-                console.error('获取直播状态失败，保留默认iframe', error);
-                showIframe();
-            }
+                if (result.code === 0 && result.data) { updatePlayerByLiveStatus(result.data); } else { showIframe(); }
+            } catch (error) { showIframe(); }
         }
-
         fetchAndUpdatePlayer();
         setInterval(fetchAndUpdatePlayer, 90 * 1000);
 
@@ -276,10 +217,10 @@
             sessionStorage.setItem('visitorId', id);
             return id;
         })();
-
         const chatBox = document.getElementById('chat-box');
         const chatInput = document.getElementById('chat-input');
         const chatSendBtn = document.getElementById('chat-send-btn');
+        const charCount = document.getElementById('char-count');
 
         function addChatMsg(text, cls) {
             const div = document.createElement('div');
@@ -289,36 +230,34 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        chatInput.addEventListener('input', function() {
+            const len = chatInput.value.length;
+            charCount.textContent = len + '/40';
+            charCount.classList.toggle('warn', len >= 35);
+        });
+
         async function sendChat() {
-            const text = chatInput.value.trim();
+            let text = chatInput.value.trim();
             if (!text) return;
+            if (text.length > 40) { text = text.substring(0, 40); }
 
             addChatMsg('已发送：' + text, 'user');
             chatInput.value = '';
+            charCount.textContent = '0/40';
+            charCount.classList.remove('warn');
             chatSendBtn.disabled = true;
 
             try {
                 const resp = await fetch('/api/danmu', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: text,
-                        visitorId: visitorId,
-                        user: '游客_' + visitorId.slice(-4)
-                    })
+                    body: JSON.stringify({ message: text, visitorId: visitorId, user: '游客_' + visitorId.slice(-4) })
                 });
-
                 if (!resp.ok) throw new Error('HTTP ' + resp.status);
-
                 const data = await resp.json();
-
-                if (data.status === 'ok') {
-                    addChatMsg('✅ 蒙蒙收到啦，请听直播间语音回应', 'system');
-                } else {
-                    addChatMsg('⚠️ ' + (data.message || '发送异常'), 'system');
-                }
+                if (data.status === 'ok') { addChatMsg('✅ 蒙蒙收到啦，请听直播间语音回应', 'system'); }
+                else { addChatMsg('⚠️ ' + (data.message || '发送异常'), 'system'); }
             } catch (e) {
-                console.error('发送失败', e);
                 addChatMsg('❌ 发送失败，请稍后重试', 'system');
             } finally {
                 chatSendBtn.disabled = false;
@@ -327,10 +266,7 @@
         }
 
         chatInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendChat();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
         });
     </script>
 </body>
