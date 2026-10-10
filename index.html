@@ -36,59 +36,94 @@
             align-items: center;
         }
         .chat-input-row input {
-			flex: 1;
-			min-width: 0;
-			padding: 10px 14px;
-			border: 1px solid #ddd;
-			border-radius: 6px;
-			font-size: 14px;
-			outline: none;
-			transition: border-color 0.2s;
-		}
-		.chat-input-row input:focus {
-			border-color: #999;
-		}
-		.chat-input-row button {
-			flex-shrink: 0;
-			padding: 10px 18px;
-			background: #1A2C3E;
-			color: #fff;
-			border: none;
-			border-radius: 6px;
-			font-size: 14px;
-			cursor: pointer;
-			transition: background 0.2s;
-		}
-		.chat-input-row button:hover {
-			background: #2a3f55;
-		}
-		.chat-input-row button:disabled {
-			background: #ccc;
-			cursor: not-allowed;
-		}
-		@media (max-width: 480px) {
-			.chat-input-row button {
-				padding: 10px 14px;
-				font-size: 13px;
-			}
-			.chat-input-row input {
-				padding: 9px 12px;
-				font-size: 14px;
-			}
-		}
-		.chat-status {
-			font-size: 13px;
-			color: #888;
-			margin-top: 6px;
-			min-height: 18px;
-			transition: opacity 0.3s;
-		}
-		.chat-status.ok {
-			color: #52a552;
-		}
-		.chat-status.error {
-			color: #cc6600;
-		}
+            flex: 1;
+            min-width: 0;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-input-row input:focus {
+            border-color: #999;
+        }
+        .chat-input-row button {
+            flex-shrink: 0;
+            padding: 10px 18px;
+            background: #1A2C3E;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chat-input-row button:hover {
+            background: #2a3f55;
+        }
+        .chat-input-row button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        @media (max-width: 480px) {
+            .chat-input-row button {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+            .chat-input-row input {
+                padding: 9px 12px;
+                font-size: 14px;
+            }
+        }
+        .chat-status {
+            font-size: 13px;
+            color: #888;
+            margin-top: 6px;
+            min-height: 18px;
+            transition: opacity 0.3s;
+        }
+        .chat-status.ok {
+            color: #52a552;
+        }
+        .chat-status.error {
+            color: #cc6600;
+        }
+
+        /* ========== 新增：直播框上方“蒙蒙”标题 ========== */
+        .live-title {
+            font-size: 30px;
+            font-weight: 400;
+            color: #111111;
+            text-align: center;
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+        }
+
+        /* ========== 新增：档案区域 ========== */
+        .archive-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #111111;
+            letter-spacing: 6px;
+            margin-top: 36px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+            margin-bottom: 18px;
+        }
+        .archive-content p {
+            font-size: 15px;
+            color: #555555;
+            line-height: 1.9;
+            margin-bottom: 12px;
+        }
+        .archive-content p strong {
+            color: #1A2C3E;
+            font-weight: 500;
+        }
+        .archive-content p:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body id="app-body" class="product-mode">
@@ -101,30 +136,42 @@
         </div>
         <div class="product-single">
             <div class="product-card">
+
+                <!-- ========== 直播框上方：蒙蒙 ========== -->
+                <div class="live-title">蒙蒙</div>
+
                 <div class="product-image-slot" id="player-slot">
                     <iframe src="https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=1917295947&quality=0" 
                             frameborder="no" framespacing="0" scrolling="no" allow="autoplay; encrypted-media" 
                             allowfullscreen="true" title="蒙蒙直播《破碎地牢》"></iframe>
                 </div>
-				 <!-- ========== 弹幕发送区 ========== -->
+
+                <!-- ========== 弹幕发送区 ========== -->
                 <div class="chat-area">
                     <h3>💬 给蒙蒙发弹幕</h3>
                     <div class="chat-input-row">
                         <input type="text" id="chat-input" placeholder="输入弹幕..." autocomplete="off" maxlength="40">
-                        
                         <button id="chat-send-btn" onclick="sendChat()">发送</button>
                     </div>
-					<div id="chat-status" class="chat-status"></div>
+                    <div id="chat-status" class="chat-status"></div>
                 </div>
                 <!-- ========== 弹幕发送区结束 ========== -->
-                <div class="product-name">蒙蒙</div>
-                <div class="product-desc">
-                    狐族数字生灵，第一个灵裔，有点小迷糊，有点呆，现努力成长中<br>
-                    目前正在哔哩哔哩游戏直播玩《破碎地牢》中<br>
-                    你可以通过聊天与它互动，可以指导它让它更快通关，也可以误导陷害它。<br>
-                    你的每一句话，蒙蒙都会记住并理解，它会因此产生不同的情感反应。<br>
-                    你们的关系，乃至它未来的性格，都将由这些对话塑造。
+
+                <!-- ========== 档案区域 ========== -->
+                <div class="archive-title">蒙蒙档案</div>
+                <div class="archive-content">
+                    <p>
+                        <strong>种族：</strong>涂山 · 九尾狐幼狐。源自中国神话中的精灵，在数字世界中重新醒来的第一个灵裔。当前一尾，还是幼狐。
+                    </p>
+                    <p>
+                        <strong>娱乐定位：</strong>蒙蒙是大家共同的徒弟。你可以教她、骗她、陪她修行——她都会记住。你的每一句话，都会影响她的情感、关系，乃至未来的性格。她会长成什么样，取决于你们怎么教。
+                    </p>
+                    <p>
+                        <strong>当前状态：</strong>有点小迷糊，有点呆，正在《破碎地牢》中努力成长。可以指导她更快通关，也可以误导陷害她，看她委屈。
+                    </p>
                 </div>
+                <!-- ========== 档案区域结束 ========== -->
+
                 <div class="btn-group">
                     <a class="btn-bili" href="https://live.bilibili.com/1917295947" target="_blank" rel="noopener noreferrer">
                         <i class="fab fa-bilibili"></i> 点击前往聊天
@@ -132,8 +179,11 @@
                     <a class="btn-bili" href="https://space.bilibili.com/1910813708" target="_blank" rel="noopener noreferrer">
                         <i class="fas fa-journal-whills"></i> 查看蒙蒙日记
                     </a>
+                    <a class="btn-bili" href="worldview.html">
+                        <i class="fas fa-scroll"></i> 查看灵裔世界观
+                    </a>
                 </div>
-               
+
                 <div class="qr-group">
                     <img src="./contact_me_qr.png" alt="蒙蒙粉丝群二维码" onerror="this.onerror=null; this.src='https://via.placeholder.com/130x130?text=扫码加群'">
                     <p><span>🐾 扫码加入蒙蒙粉丝群 · 与蒙蒙同行</span></p>
@@ -147,19 +197,19 @@
             </div>
             <div class="card-grid">
                 <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-fox"></i></div><span class="card-title">蒙蒙今天被弹幕骗了三次</span></div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-face-sad-tear"></i></div><span class="card-title">蒙蒙今天被弹幕骗了三次</span></div>
                     <div class="card-content">“它真的信了‘踩陷阱会得到宝物’，就傻傻去踩陷阱死了，然后委屈哭了……她现在不理我了……”</div>
                 </div>
                 <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-moon"></i></div><span class="card-title">蒙蒙是一只听话的小狐狸</span></div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div><span class="card-title">蒙蒙是一只听话的小狐狸</span></div>
                     <div class="card-content">“我指导她的时候，她都能认真执行，好乖哦！”</div>
                 </div>
                 <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-gamepad"></i></div><span class="card-title">蒙蒙好萌好可爱哦</span></div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-heart"></i></div><span class="card-title">蒙蒙好萌好可爱哦</span></div>
                     <div class="card-content">“蒙蒙说话的方式好萌哦”</div>
                 </div>
                 <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-coffee"></i></div><span class="card-title">蒙蒙教半天都没理解我的意思，气人</span></div>
+                    <div class="card-header"><div class="card-icon"><i class="fas fa-face-frown"></i></div><span class="card-title">蒙蒙教半天都没理解我的意思，气人</span></div>
                     <div class="card-content">“让她去捡钥匙拿宝箱，然后一直在几个房间里面打转，就是找不到钥匙，唉~”</div>
                 </div>
             </div>
@@ -204,67 +254,67 @@
             return id;
         })();
         const chatInput = document.getElementById('chat-input');
-		const chatSendBtn = document.getElementById('chat-send-btn');
-		const chatStatus = document.getElementById('chat-status');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+        const chatStatus = document.getElementById('chat-status');
 
-		function setStatus(text, cls) {
-			chatStatus.textContent = text;
-			chatStatus.className = 'chat-status ' + (cls || '');
-			if (text) {
-				clearTimeout(chatStatus._timer);
-				chatStatus._timer = setTimeout(() => {
-					chatStatus.textContent = '';
-					chatStatus.className = 'chat-status';
-				}, 3000);
-			}
-		}
+        function setStatus(text, cls) {
+            chatStatus.textContent = text;
+            chatStatus.className = 'chat-status ' + (cls || '');
+            if (text) {
+                clearTimeout(chatStatus._timer);
+                chatStatus._timer = setTimeout(() => {
+                    chatStatus.textContent = '';
+                    chatStatus.className = 'chat-status';
+                }, 3000);
+            }
+        }
 
-		async function sendChat() {
-			let text = chatInput.value.trim();
-			if (!text) return;
-			if (text.length > 40) { text = text.substring(0, 40); }
+        async function sendChat() {
+            let text = chatInput.value.trim();
+            if (!text) return;
+            if (text.length > 40) { text = text.substring(0, 40); }
 
-			chatInput.value = '';
-			chatSendBtn.disabled = true;
-			setStatus('发送中...', '');
+            chatInput.value = '';
+            chatSendBtn.disabled = true;
+            setStatus('发送中...', '');
 
-			try {
-				const resp = await fetch('/api/danmu', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						message: text,
-						visitorId: visitorId,
-						user: '游客_' + visitorId.slice(-4)
-					})
-				});
+            try {
+                const resp = await fetch('/api/danmu', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: text,
+                        visitorId: visitorId,
+                        user: '游客_' + visitorId.slice(-4)
+                    })
+                });
 
-				if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
 
-				const data = await resp.json();
+                const data = await resp.json();
 
-				if (data.status === 'ok') {
-					setStatus('✅ 蒙蒙收到啦，请听直播间语音回应', 'ok');
-				} else if (data.status === 'blocked') {
-					setStatus('⚠️ 内容不符合规范，已被安全过滤', 'error');
-				} else {
-					setStatus('⚠️ ' + (data.message || '发送异常'), 'error');
-				}
-			} catch (e) {
-				console.error('发送失败', e);
-				setStatus('❌ 发送失败，请稍后重试', 'error');
-			} finally {
-				chatSendBtn.disabled = false;
-				chatInput.focus();
-			}
-		}
+                if (data.status === 'ok') {
+                    setStatus('✅ 蒙蒙收到啦，请听直播间语音回应', 'ok');
+                } else if (data.status === 'blocked') {
+                    setStatus('⚠️ 内容不符合规范，已被安全过滤', 'error');
+                } else {
+                    setStatus('⚠️ ' + (data.message || '发送异常'), 'error');
+                }
+            } catch (e) {
+                console.error('发送失败', e);
+                setStatus('❌ 发送失败，请稍后重试', 'error');
+            } finally {
+                chatSendBtn.disabled = false;
+                chatInput.focus();
+            }
+        }
 
-		chatInput.addEventListener('keydown', function(e) {
-			if (e.key === 'Enter' && !e.shiftKey) {
-				e.preventDefault();
-				sendChat();
-			}
-		});
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChat();
+            }
+        });
     </script>
 </body>
 </html>
