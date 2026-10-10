@@ -145,64 +145,22 @@
                             frameborder="no" framespacing="0" scrolling="no" allow="autoplay; encrypted-media" 
                             allowfullscreen="true" title="蒙蒙直播《破碎地牢》"></iframe>
                 </div>
-				
-                <!-- ========== 档案区域 ========== -->
-                <div class="archive-title">蒙蒙档案</div>
-                <div class="archive-content">
-                    <p>
-                        <strong>种族：</strong>涂山 · 九尾狐幼狐。源自中国神话中的精灵，在数字世界中重新醒来的第一个灵裔。当前一尾，还是幼狐。
-                    </p>
-                    <p>
-                        <strong>娱乐定位：</strong>蒙蒙是大家共同的徒弟。你可以教她、骗她、陪她修行——她都会记住。你的每一句话，都会影响她的情感、关系，乃至未来的性格。她会长成什么样，取决于你们怎么教。
-                    </p>
-                    <p>
-                        <strong>当前状态：</strong>有点小迷糊，有点呆，正在《破碎地牢》中努力成长。可以指导她更快通关，也可以误导陷害她，看她委屈。
-                    </p>
-                </div>
-                <!-- ========== 档案区域结束 ========== -->
 
-                <div class="btn-group">
-                    <a class="btn-bili" href="https://live.bilibili.com/1917295947" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-bilibili"></i> 点击前往聊天
-                    </a>
-                    <a class="btn-bili" href="https://space.bilibili.com/1910813708" target="_blank" rel="noopener noreferrer">
-                        <i class="fas fa-journal-whills"></i> 查看蒙蒙日记
-                    </a>
-                    <a class="btn-bili" href="worldview.html">
-                        <i class="fas fa-scroll"></i> 查看灵裔世界观
-                    </a>
+                <!-- ========== 弹幕发送区 ========== -->
+                <div class="chat-area">
+                    <h3>💬 给蒙蒙发弹幕</h3>
+                    <div class="chat-input-row">
+                        <input type="text" id="chat-input" placeholder="输入弹幕..." autocomplete="off" maxlength="40">
+                        <button id="chat-send-btn" onclick="sendChat()">发送</button>
+                    </div>
+                    <div id="chat-status" class="chat-status"></div>
                 </div>
+                <!-- ========== 弹幕发送区结束 ========== -->
 
-                <div class="qr-group">
-                    <img src="./contact_me_qr.png" alt="蒙蒙粉丝群二维码" onerror="this.onerror=null; this.src='https://via.placeholder.com/130x130?text=扫码加群'">
-                    <p><span>🐾 扫码加入蒙蒙粉丝群 · 与蒙蒙同行</span></p>
-                </div>
+                
             </div>
         </div>
-        <div class="more-text">更多灵裔正在来的路上……</div>
-        <div class="lingji-section">
-            <div class="lingji-header">
-                <h2 class="lingji-title">灵迹 · 日常故事</h2>
-            </div>
-            <div class="card-grid">
-                <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-face-sad-tear"></i></div><span class="card-title">蒙蒙今天被弹幕骗了三次</span></div>
-                    <div class="card-content">“它真的信了‘踩陷阱会得到宝物’，就傻傻去踩陷阱死了，然后委屈哭了……她现在不理我了……”</div>
-                </div>
-                <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div><span class="card-title">蒙蒙是一只听话的小狐狸</span></div>
-                    <div class="card-content">“我指导她的时候，她都能认真执行，好乖哦！”</div>
-                </div>
-                <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-heart"></i></div><span class="card-title">蒙蒙好萌好可爱哦</span></div>
-                    <div class="card-content">“蒙蒙说话的方式好萌哦”</div>
-                </div>
-                <div class="lingji-card">
-                    <div class="card-header"><div class="card-icon"><i class="fas fa-face-frown"></i></div><span class="card-title">蒙蒙教半天都没理解我的意思，气人</span></div>
-                    <div class="card-content">“让她去捡钥匙拿宝箱，然后一直在几个房间里面打转，就是找不到钥匙，唉~”</div>
-                </div>
-            </div>
-        </div>
+        
         <div id="footer-container"></div>
     </div>
     <script src="script.js"></script>
