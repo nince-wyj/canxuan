@@ -4,6 +4,69 @@
     box-sizing: border-box;
 }
 
+/* ============================================================
+   主题变量：页首页尾统一使用
+   ============================================================ */
+:root {
+    --site-font: 'Inter', '思源黑体', 'Microsoft YaHei', sans-serif;
+    --site-color-strong: #111111;
+    --site-color: #333333;
+    --site-color-muted: #666666;
+    --site-color-light: #888888;
+    --site-border: #eeeeee;
+    --site-nav-bg: rgba(255, 255, 255, 0.7);
+    --site-footer-bg: transparent;
+    --site-footer-links-bg: #e0e0e0;
+    --site-link: #666666;
+    --site-link-hover: #111111;
+    --site-link-active: #111111;
+    --site-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+body.product-mode {
+    --site-nav-bg: rgba(245, 245, 245, 0.8);
+    --site-footer-bg: transparent;
+    --site-footer-links-bg: #e0e0e0;
+    --site-color-strong: #111111;
+    --site-color: #333333;
+    --site-color-muted: #666666;
+    --site-color-light: #888888;
+    --site-border: #eeeeee;
+    --site-link: #666666;
+    --site-link-hover: #111111;
+    --site-link-active: #111111;
+}
+
+body.philosophy-mode {
+    --site-nav-bg: rgba(255, 255, 255, 0.7);
+    --site-footer-bg: transparent;
+    --site-footer-links-bg: #e0e0e0;
+    --site-color-strong: #111111;
+    --site-color: #333333;
+    --site-color-muted: #666666;
+    --site-color-light: #888888;
+    --site-border: #eeeeee;
+    --site-link: #666666;
+    --site-link-hover: #111111;
+    --site-link-active: #111111;
+}
+
+body.worldview-mode {
+    --site-font: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", serif;
+    --site-color-strong: #3a3226;
+    --site-color: #5a4e3c;
+    --site-color-muted: #6b5e4a;
+    --site-color-light: #9a8c74;
+    --site-border: #d4c9b8;
+    --site-nav-bg: rgba(247, 244, 237, 0.85);
+    --site-footer-bg: transparent;
+    --site-footer-links-bg: #efe9dd;
+    --site-link: #8b7355;
+    --site-link-hover: #5a4e3c;
+    --site-link-active: #3a3226;
+    --site-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
 body {
     font-family: 'Inter', '思源黑体', 'Microsoft YaHei', sans-serif;
     background-color: #FFFFFF;
@@ -28,6 +91,9 @@ body.product-mode {
     padding: 0 24px;
 }
 
+/* ============================================================
+   页头：使用变量统一
+   ============================================================ */
 .nav {
     display: flex;
     justify-content: space-between;
@@ -37,24 +103,23 @@ body.product-mode {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--site-nav-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    box-shadow: var(--site-shadow);
     transition: background-color 0.3s ease;
-}
-
-body.product-mode .nav {
-    background: rgba(245, 245, 245, 0.8);
+    font-family: var(--site-font);
+    color: var(--site-color);
 }
 
 .logo a {
     font-size: 24px;
     font-weight: 400;
     letter-spacing: 2px;
-    color: #111111;
+    color: var(--site-color-strong);
     text-decoration: none;
     position: relative;
+    font-family: var(--site-font);
 }
 
 .logo a::after {
@@ -64,7 +129,7 @@ body.product-mode .nav {
     left: 0;
     width: 30px;
     height: 1px;
-    background-color: #111111;
+    background-color: var(--site-color-strong);
     opacity: 0.3;
 }
 
@@ -75,7 +140,7 @@ body.product-mode .nav {
 
 .nav-links a {
     text-decoration: none;
-    color: #666666;
+    color: var(--site-link);
     font-size: 16px;
     font-weight: 400;
     transition: color 0.2s;
@@ -83,13 +148,13 @@ body.product-mode .nav {
 }
 
 .nav-links a:hover {
-    color: #111111;
+    color: var(--site-link-hover);
 }
 
 .nav-links a.active {
-    color: #111111;
+    color: var(--site-link-active);
     font-weight: 500;
-    border-bottom: 1px solid #111111;
+    border-bottom: 1px solid var(--site-link-active);
     padding-bottom: 4px;
 }
 
@@ -649,34 +714,39 @@ h1.product-family {
     letter-spacing: 1px;
 }
 
+/* ============================================================
+   页尾：使用变量统一
+   ============================================================ */
 .footer {
     padding: 40px 0 30px;
-    border-top: 1px solid #eeeeee;
+    border-top: 1px solid var(--site-border);
     margin-top: 60px;
-    color: #888888;
+    color: var(--site-color-light);
     font-size: 14px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    font-family: var(--site-font);
+    background: var(--site-footer-bg);
 }
 
 .footer-links {
     display: flex;
     gap: 24px;
     padding: 16px 0;
-    background-color: #e0e0e0;
+    background-color: var(--site-footer-links-bg);
     margin: 0 -24px;
     padding-left: 24px;
 }
 
 .footer-links a {
-    color: #666666;
+    color: var(--site-link);
     text-decoration: none;
     font-size: 14px;
 }
 
 .footer-links a:hover {
-    color: #111111;
+    color: var(--site-link-hover);
 }
 
 .footer-bottom {
